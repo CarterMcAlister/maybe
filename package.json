@@ -39,7 +39,7 @@
         "@auth/prisma-adapter": "^1.0.14",
         "@bull-board/api": "^5.14.0",
         "@bull-board/express": "^5.14.0",
-        "@casl/ability": "^6.3.2",
+        "@casl/ability": "6.7.1",
         "@casl/prisma": "^1.4.1",
         "@fast-csv/format": "^4.3.5",
         "@headlessui/react": "^1.7.2",
