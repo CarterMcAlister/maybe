@@ -28,7 +28,8 @@
         "dev:circular": "pnpx madge --circular --extensions ts libs",
         "analyze:client": "ANALYZE=true nx build client --skip-nx-cache",
         "tools:pages": "live-server tools/pages",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "postinstall": "prisma generate"
     },
     "prisma": {
         "seed": "ts-node --transpile-only prisma/seed.ts"
