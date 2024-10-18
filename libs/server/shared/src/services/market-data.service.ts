@@ -1,16 +1,33 @@
-import { AssetClass, Prisma } from '@prisma/client'
+import type { SharedType } from '@maybe-finance/shared'
+import { MarketUtil, SharedUtil } from '@maybe-finance/shared'
+import type { IAggs, IRestClient } from '@polygon.io/client-js'
+import { restClient } from '@polygon.io/client-js'
 import type { Security } from '@prisma/client'
+import { AssetClass, Prisma } from '@prisma/client'
 import _ from 'lodash'
 import { DateTime, Duration } from 'luxon'
 import type { Logger } from 'winston'
-import type { IRestClient } from '@polygon.io/client-js'
-import { restClient } from '@polygon.io/client-js'
-import type { SharedType } from '@maybe-finance/shared'
-import { MarketUtil, SharedUtil } from '@maybe-finance/shared'
 import type { CacheService } from '.'
 import { toDecimal } from '../utils/db-utils'
-import type { ITickersResults } from '@polygon.io/client-js/lib/rest/reference/tickers'
-import type { IAggs } from '@polygon.io/client-js/lib/rest/stocks/aggregates'
+
+export interface ITickersResults {
+    ticker: string
+    name: string
+    market: string
+    locale: string
+    primary_exchange: string
+    type: string
+    active: boolean
+    currency_symbol?: string
+    currency_name?: string
+    base_currency_symbol?: string
+    base_currency_name?: string
+    cik?: string
+    composite_figi?: string
+    share_class_fig?: string
+    last_updated_utc?: string
+    deslisted_utc?: string
+}
 
 type DailyPricing = {
     date: DateTime
