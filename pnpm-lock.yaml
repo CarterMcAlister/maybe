@@ -30,8 +30,8 @@ dependencies:
         specifier: ^2.9.6
         version: 2.9.6(react-hook-form@7.33.1)
     '@polygon.io/client-js':
-        specifier: ^6.0.6
-        version: 6.0.6
+        specifier: 7.3.2
+        version: 7.3.2
     '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.5
@@ -4327,11 +4327,12 @@ packages:
             }
         dev: true
 
-    /@polygon.io/client-js@6.0.6:
+    /@polygon.io/client-js@7.3.2:
         resolution:
             {
-                integrity: sha512-w0ltaCmQYRPA7lx/uu7LJgNKQdeYWXWlb243E2K2i9NuYG12X2LadZv/TVdkGkV5EiU+bdwgT5KJIc50zSRROg==,
+                integrity: sha512-/06F7g1MFPbot/mkP1Ab0sq1s07hIqkhFajWA9fUFnxgFFXYQCQ3cgXiLBXBqTXqIh0N800LPT7UggISvxjslg==,
             }
+        engines: { node: '>=16' }
         dependencies:
             cross-fetch: 3.1.5
             query-string: 7.1.1
