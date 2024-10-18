@@ -1,5 +1,7 @@
 import type { PrismaClient, User } from '@prisma/client'
-import { faker } from '@faker-js/faker'
+import Chance from 'chance'
+
+const chance = new Chance()
 
 export async function resetUser(prisma: PrismaClient, authId = '__TEST_USER_ID__'): Promise<User> {
     try {
@@ -14,8 +16,8 @@ export async function resetUser(prisma: PrismaClient, authId = '__TEST_USER_ID__
             prisma.user.create({
                 data: {
                     authId,
-                    email: faker.internet.email(),
-                    tellerUserId: faker.string.uuid(),
+                    email: chance.email(),
+                    tellerUserId: chance.guid(),
                 },
             }),
         ])

@@ -1,13 +1,15 @@
-import { faker } from '@faker-js/faker'
-import type { TellerTypes } from '../../libs/teller-api/src'
 import type { Prisma } from '@prisma/client'
+import Chance from 'chance'
 import { DateTime } from 'luxon'
+import type { TellerTypes } from '../../libs/teller-api/src'
+
+const chance = new Chance()
 
 function generateSubType(
     type: TellerTypes.AccountTypes
 ): TellerTypes.DepositorySubtypes | TellerTypes.CreditSubtype {
     if (type === 'depository') {
-        return faker.helpers.arrayElement([
+        return chance.pickone([
             'checking',
             'savings',
             'money_market',
@@ -39,10 +41,10 @@ export function generateAccounts({
 }: GenerateAccountsParams) {
     const accounts: TellerTypes.Account[] = []
     for (let i = 0; i < count; i++) {
-        const accountId = faker.string.uuid()
-        const lastFour = faker.finance.creditCardNumber().slice(-4)
+        const accountId = chance.guid()
+        const lastFour = chance.string({ length: 4, pool: '0123456789' })
         const type: TellerTypes.AccountTypes =
-            accountType ?? faker.helpers.arrayElement(['depository', 'credit'])
+            accountType ?? chance.pickone(['depository', 'credit'])
         let subType: TellerTypes.DepositorySubtypes | TellerTypes.CreditSubtype
         subType = generateSubType(type)
 
@@ -57,18 +59,18 @@ export function generateAccounts({
                 name: institutionName,
                 id: institutionId,
             },
-            name: faker.finance.accountName(),
+            name: chance.word(),
             currency: 'USD',
             id: accountId,
             last_four: lastFour,
-            status: faker.helpers.arrayElement(['open', 'closed']) as TellerTypes.AccountStatus,
+            status: chance.pickone(['open', 'closed']) as TellerTypes.AccountStatus,
         }
 
-        if (faker.datatype.boolean()) {
+        if (chance.bool()) {
             accounts.push({
                 ...accountStub,
                 type: 'depository',
-                subtype: faker.helpers.arrayElement([
+                subtype: chance.pickone([
                     'checking',
                     'savings',
                     'money_market',
@@ -89,7 +91,7 @@ export function generateAccounts({
 }
 
 export function generateBalance(account_id: string): TellerTypes.AccountBalance {
-    const amount = faker.finance.amount()
+    const amount = chance.floating({ min: 0, max: 10000, fixed: 2 }).toString()
     return {
         available: amount,
         ledger: amount,
@@ -141,11 +143,11 @@ export function generateTransactions(count: number, accountId: string): TellerTy
     const transactions: TellerTypes.Transaction[] = []
 
     for (let i = 0; i < count; i++) {
-        const transactionId = `txn_${faker.string.uuid()}`
+        const transactionId = `txn_${chance.guid()}`
         const transaction = {
             details: {
-                processing_status: faker.helpers.arrayElement(['complete', 'pending']),
-                category: faker.helpers.arrayElement([
+                processing_status: chance.pickone(['complete', 'pending']),
+                category: chance.pickone([
                     'accommodation',
                     'advertising',
                     'bar',
@@ -176,25 +178,22 @@ export function generateTransactions(count: number, accountId: string): TellerTy
                     'utilities',
                 ]),
                 counterparty: {
-                    name: faker.company.name(),
-                    type: faker.helpers.arrayElement(['person', 'business']),
+                    name: chance.company(),
+                    type: chance.pickone(['person', 'business']),
                 },
             },
             running_balance: null,
-            description: faker.word.words({ count: { min: 3, max: 10 } }),
+            description: chance.sentence({ words: chance.integer({ min: 3, max: 10 }) }),
             id: transactionId,
-            date: faker.date
-                .between({ from: lowerBound.toJSDate(), to: now.toJSDate() })
-                .toISOString()
-                .split('T')[0], // recent date in 'YYYY-MM-DD' format
+            date: chance.date({ min: lowerBound.toJSDate(), max: now.toJSDate() }).toISOString(),
             account_id: accountId,
             links: {
                 account: `https://api.teller.io/accounts/${accountId}`,
                 self: `https://api.teller.io/accounts/${accountId}/transactions/${transactionId}`,
             },
-            amount: faker.finance.amount(),
-            type: faker.helpers.arrayElement(['transfer', 'deposit', 'withdrawal']),
-            status: faker.helpers.arrayElement(['pending', 'posted']),
+            amount: chance.floating({ min: 0, max: 10000, fixed: 2 }).toString(),
+            type: chance.pickone(['transfer', 'deposit', 'withdrawal']),
+            status: chance.pickone(['pending', 'posted']),
         } as TellerTypes.Transaction
         transactions.push(transaction)
     }
@@ -202,20 +201,20 @@ export function generateTransactions(count: number, accountId: string): TellerTy
 }
 
 export function generateEnrollment(): TellerTypes.Enrollment & { institutionId: string } {
-    const institutionName = faker.company.name()
+    const institutionName = chance.company()
     const institutionId = institutionName.toLowerCase().replace(/\s/g, '_')
     return {
-        accessToken: `token_${faker.string.alphanumeric(15)}`,
+        accessToken: `token_${chance.string({ length: 15, pool: 'abcdefghijklmnopqrstuvwxyz' })}`,
         user: {
-            id: `usr_${faker.string.alphanumeric(15)}`,
+            id: `usr_${chance.string({ length: 15, pool: 'abcdefghijklmnopqrstuvwxyz' })}`,
         },
         enrollment: {
-            id: `enr_${faker.string.alphanumeric(15)}`,
+            id: `enr_${chance.string({ length: 15, pool: 'abcdefghijklmnopqrstuvwxyz' })}`,
             institution: {
                 name: institutionName,
             },
         },
-        signatures: [faker.string.alphanumeric(15)],
+        signatures: [chance.string({ length: 15, pool: 'abcdefghijklmnopqrstuvwxyz' })],
         institutionId,
     }
 }
@@ -234,7 +233,7 @@ export function generateConnection(): GenerateConnectionsResponse {
 
     const enrollment = generateEnrollment()
 
-    const accountCount: number = faker.number.int({ min: 1, max: 3 })
+    const accountCount: number = chance.integer({ min: 1, max: 3 })
 
     const enrollmentId = enrollment.enrollment.id
     const institutionName = enrollment.enrollment.institution.name
@@ -250,7 +249,7 @@ export function generateConnection(): GenerateConnectionsResponse {
     for (const account of accountsWithBalances) {
         const { balance, ...accountWithoutBalance } = account
         accounts.push(accountWithoutBalance)
-        const transactionsCount: number = faker.number.int({ min: 1, max: 5 })
+        const transactionsCount: number = chance.integer({ min: 1, max: 5 })
         const generatedTransactions = generateTransactions(transactionsCount, account.id)
         transactions.push(...generatedTransactions)
     }
