@@ -34,7 +34,18 @@
 
     // Automatically set the box up once it is built
     "postCreateCommand": "corepack enable && pnpm install",
-    "postStartCommand": "pnpm prisma:migrate:dev && pnpm dev"
+    "postStartCommand": "pnpm prisma:migrate:dev && pnpm dev",
+    "portsAttributes": {
+        "3333": {
+            "label": "Server"
+        },
+        "3334": {
+            "label": "Worker"
+        },
+        "4200": {
+            "label": "Client"
+        }
+    }
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},

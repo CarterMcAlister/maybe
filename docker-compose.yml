@@ -11,6 +11,7 @@ services:
         init: true # tini – helps when you stop / restart
         command: sleep infinity # VS Code's devcontainer will exec into it
         working_dir: /workspace/maybe
+        env_file: .env
         volumes:
             - ..:/workspace:cached # mount the repo
             - node_modules:/workspace/node_modules
@@ -21,8 +22,8 @@ services:
             NX_DATABASE_URL: postgres://maybe:maybe@postgres:5432/maybe_local
             REDIS_URL: redis://redis:6379
             NX_REDIS_URL: redis://redis:6379
-            NX_PORT: 3333 # keeps default port mapping the same
             NX_NGROK_URL: http://ngrok:4551
+            NX_WEBHOOK_URL: http://test.com
         depends_on:
             - postgres
             - redis
