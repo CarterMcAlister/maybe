@@ -9,8 +9,8 @@ services:
         image: mcr.microsoft.com/devcontainers/typescript-node:18-bullseye # Node + pnpm pre-installed
         container_name: maybe_app
         init: true # tini – helps when you stop / restart
-        command: sleep infinity # VS Code’s devcontainer will exec into it
-        working_dir: /workspace
+        command: sleep infinity # VS Code's devcontainer will exec into it
+        working_dir: /workspace/maybe
         volumes:
             - ..:/workspace:cached # mount the repo
             - node_modules:/workspace/node_modules
@@ -18,8 +18,11 @@ services:
         environment:
             # point the code at the side-car DB/Redis
             DATABASE_URL: postgres://maybe:maybe@postgres:5432/maybe_local
+            NX_DATABASE_URL: postgres://maybe:maybe@postgres:5432/maybe_local
             REDIS_URL: redis://redis:6379
+            NX_REDIS_URL: redis://redis:6379
             NX_PORT: 3333 # keeps default port mapping the same
+            NX_NGROK_URL: http://ngrok:4551
         depends_on:
             - postgres
             - redis
@@ -29,7 +32,6 @@ services:
             - '4200:4200' # next - dev
     postgres:
         container_name: postgres
-        profiles: [services]
         image: timescale/timescaledb:latest-pg14
         ports:
             - 5433:5432
@@ -42,11 +44,23 @@ services:
 
     redis:
         container_name: redis
-        profiles: [services]
         image: redis:6.2-alpine
         ports:
-            - 6379:6379
+            - 6380:6379
         command: 'redis-server --bind 0.0.0.0'
+    ngrok:
+        env_file: .env
+        image: shkoliar/ngrok:latest
+        container_name: ngrok
+        ports:
+            - 4551:4551
+        environment:
+            - DOMAIN=${NGROK_DOMAIN:-host.docker.internal}
+            - PORT=3333
+            - AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+            - DEBUG=true
 
 volumes:
+    node_modules:
+    pnpm-store:
     postgres_data:

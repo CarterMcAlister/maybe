@@ -10,11 +10,11 @@
     // The 'service' property is the name of the service for the container that VS Code should
     // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
     "service": "app",
-    "runServices": ["app", "postgres", "redis"],
+    "runServices": ["app", "postgres", "redis", "ngrok"],
 
     // The optional 'workspaceFolder' property is the path VS Code should open by default when
     // connected. This is typically a file mount in .devcontainer/docker-compose.yml
-    "workspaceFolder": "/workspace",
+    "workspaceFolder": "/workspace/maybe",
     "features": {
         "ghcr.io/devcontainers/features/node:1": { "version": "18" },
         "ghcr.io/devcontainers/features/git:1": {},
@@ -30,11 +30,11 @@
             "extensions": ["prisma.prisma", "esbenp.prettier-vscode"]
         }
     },
-    "forwardPorts": [3333, 3334, 4200, 5433, 6379],
+    "forwardPorts": [3333, 3334, 4200, 5433, 6379, 4551],
 
     // Automatically set the box up once it is built
     "postCreateCommand": "corepack enable && pnpm install",
-    "postStartCommand": "pnpm prisma:migrate:dev && pnpm dev"
+    "postStartCommand": "pnpm prisma:migrate:dev"
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
