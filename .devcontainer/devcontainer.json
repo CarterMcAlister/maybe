@@ -34,7 +34,7 @@
 
     // Automatically set the box up once it is built
     "postCreateCommand": "corepack enable && pnpm install",
-    "postStartCommand": "pnpm prisma:migrate:dev"
+    "postStartCommand": "pnpm prisma:migrate:dev && pnpm dev"
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
